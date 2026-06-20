@@ -1,22 +1,36 @@
 require('dotenv').config();
 
 const express = require('express');
+const axios = require('axios');
 
 const app = express();
-const PORT = 3000;
+
+const API_KEY = process.env.VISUAL_CROSSING_API_KEY;
 
 app.get('/', (req, res) => {
     res.send('Welcome! Navigate to /weather to see the weather data.');
 });
 
-app.get('/weather', (req, res) => {
-    res.json({
-        city: 'Perth',
-        temperature: 22,
-        condition: 'Sunny'
-    });
+app.get('/weather/:location', async (req, res) => {
+    try {
+        const { location } = req.params;
+
+        const today = new Date().toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
+
+        const url = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${encodeURIComponent(location)}/${encodeURIComponent(today)}?key=${API_KEY}&unitGroup=metric&include=current`;
+
+        const response = await axios.get(url);
+
+        res.json(response.data);
+    } catch (err) {
+        console.error(err.response?.data || err.message);
+
+        res.status(500).json({
+            error: 'Failed to fetch weather data'
+        });
+    }
 });
 
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+app.listen(process.env.PORT, () => {
+    console.log(`Server running on http://localhost:${process.env.PORT}`);
 });
