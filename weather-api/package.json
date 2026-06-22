@@ -67,6 +67,7 @@
     "qs": "^6.15.2",
     "range-parser": "^1.2.1",
     "raw-body": "^3.0.2",
+    "redis": "^6.0.0",
     "router": "^2.2.0",
     "safer-buffer": "^2.1.2",
     "send": "^1.2.1",
